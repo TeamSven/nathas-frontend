@@ -116,7 +116,7 @@ App.propTypes = {
 
 export default createContainer(() => {
     return {
-        song: Tasks.find({}, { sort: { requested_at: 1 } }).fetch()[0],
+        song: Tasks.find({}).fetch()[0],
         params: Params.find({}, { sort: { requested_at: 1 } }).fetch()[0],
     };
 }, App);
