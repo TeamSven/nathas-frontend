@@ -5,6 +5,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/tasks';
 import { Params } from '../api/params';
 import _ from 'lodash';
+import './main.css';
 //10.130.202.108
 class App extends Component {
 
@@ -88,14 +89,15 @@ class App extends Component {
             height: '390',
             width: '640',
             playerVars: { // https://developers.google.com/youtube/player_parameters
-                autoplay: 1
+                autoplay: 1,
+                controls: 0
             }
         };
         if(_.isUndefined(this.props.song)) {
-            return <div>NOTHING TO PLAY! GO REQUEST SOME...</div>;
+            return <div className="centered">NOTHING TO PLAY! GO REQUEST SOME...</div>;
         } else {
             return (
-                <div className="App">
+                <div className="centered">
                     <YouTube
                         videoId={this.state.id}
                         opts={opts}
