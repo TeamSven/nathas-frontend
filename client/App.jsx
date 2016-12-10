@@ -43,15 +43,19 @@ class App extends Component {
                 autoplay: 1
             }
         };
-        return (
-            <div className="App">
-                <YouTube
-                    videoId={this.state.id}
-                    opts={opts}
-                    onEnd={() => this.handleEnd()}
-                />
-            </div>
-        );
+        if(_.isUndefined(this.props.song)) {
+            return <div>NOTHING TO PLAY! GO REQUEST SOME...</div>;
+        } else {
+            return (
+                <div className="App">
+                    <YouTube
+                        videoId={this.state.id}
+                        opts={opts}
+                        onEnd={() => this.handleEnd()}
+                    />
+                </div>
+            );
+        }
     }
 }
 
