@@ -33,9 +33,13 @@ class App extends Component {
                 this.setState({id: request_url.split('=')[1]});
             }
         }
-
         if(!_.isUndefined(nextProps.params)) {
-            this.setState({ state: nextProps.params.state});
+            if (!_.isUndefined(nextProps.params.state)) {
+                this.setState({state: nextProps.params.state});
+            }
+            if (!_.isUndefined(nextProps.params.volume)) {
+                this.setState({volume: nextProps.params.volume});
+            }
         }
     }
     handleEnd() {
@@ -52,12 +56,30 @@ class App extends Component {
     }
     handleStateChange() {
         console.log('called', this.state.state);
-        if(this.state.state === 'pause') {
-            this.state.player.pauseVideo();
+        if(!_.isUndefined(this.state.player)) {
+            if(this.state.state === 'pause') {
+                this.state.player.pauseVideo();
+            }
+            if(this.state.state === 'play') {
+                this.state.player.playVideo();
+            }
+            if(this.state.volume === 'volumeup') {
+                console.log('increasing volume');
+                this.state.player.setVolume(this.state.player.getVolume() + 20);
+                this.resetVolume();
+            }
+            if(this.state.volume === 'volumedown') {
+                console.log('decreasing volume');
+                this.state.player.setVolume(this.state.player.getVolume() - 20);
+                this.resetVolume();
+            }
         }
-        if(this.state.state === 'play') {
-            this.state.player.playVideo();
-        }
+    }
+    resetVolume() {
+        const currentParams = Params.find({}).fetch()[0];
+        Params.update(currentParams._id, {
+            $set: { volume: '' },
+        });
     }
     render() {
         console.log('render');

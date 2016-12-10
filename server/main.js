@@ -43,4 +43,36 @@ Meteor.startup(() => {
             data: 'ok'
         });
     });
+    JsonRoutes.add("get", "/volumeup", function (req, res, next) {
+        const currentParams = Params.find({}).fetch()[0];
+        if( _.isUndefined(currentParams)) {
+            Params.insert({
+                volume: 'volumeup' ,
+                createdAt: new Date(),
+            });
+        } else {
+            Params.update(currentParams._id, {
+                $set: { volume: 'volumeup' },
+            });
+        }
+        JsonRoutes.sendResult(res, {
+            data: 'ok'
+        });
+    });
+    JsonRoutes.add("get", "/volumedown", function (req, res, next) {
+        const currentParams = Params.find({}).fetch()[0];
+        if( _.isUndefined(currentParams)) {
+            Params.insert({
+                volume: 'volumedown' ,
+                createdAt: new Date(),
+            });
+        } else {
+            Params.update(currentParams._id, {
+                $set: { volume: 'volumedown' },
+            });
+        }
+        JsonRoutes.sendResult(res, {
+            data: 'ok'
+        });
+    });
 });
