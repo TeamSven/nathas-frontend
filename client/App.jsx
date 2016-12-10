@@ -3,6 +3,7 @@ import YouTube from 'react-youtube';
 import 'whatwg-fetch';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/tasks';
+import { Params } from '../api/params';
 import _ from 'lodash';
 //10.130.202.108
 class App extends Component {
@@ -12,6 +13,7 @@ class App extends Component {
         this.state = { id: ''};
     }
     componentWillReceiveProps(nextProps) {
+        console.log('componentWillReceiveProps', nextProps);
         if(!_.isUndefined(nextProps.song)) {
             const {request_url, request_string} = nextProps.song;
             console.log(request_url, request_string);
@@ -31,12 +33,35 @@ class App extends Component {
                 this.setState({id: request_url.split('=')[1]});
             }
         }
+
+        if(!_.isUndefined(nextProps.params)) {
+            this.setState({ state: nextProps.params.state});
+        }
     }
     handleEnd() {
         console.log('song has ended', this.props);
         Tasks.remove(this.props.song._id);
     }
+    handleOnReady(event) {
+        console.log('event', this.state);
+        if(!_.isUndefined(event)) {
+            this.setState({
+                player: event.target,
+            });
+        }
+    }
+    handleStateChange() {
+        console.log('called', this.state.state);
+        if(this.state.state === 'pause') {
+            this.state.player.pauseVideo();
+        }
+        if(this.state.state === 'play') {
+            this.state.player.playVideo();
+        }
+    }
     render() {
+        console.log('render');
+        this.handleStateChange();
         const opts = {
             height: '390',
             width: '640',
@@ -53,6 +78,7 @@ class App extends Component {
                         videoId={this.state.id}
                         opts={opts}
                         onEnd={() => this.handleEnd()}
+                        onReady={(event) => this.handleOnReady(event)}
                     />
                 </div>
             );
@@ -67,5 +93,6 @@ App.propTypes = {
 export default createContainer(() => {
     return {
         song: Tasks.find({}, { sort: { requested_at: 1 } }).fetch()[0],
+        params: Params.find({}, { sort: { requested_at: 1 } }).fetch()[0],
     };
 }, App);
