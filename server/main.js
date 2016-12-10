@@ -38,7 +38,7 @@ Meteor.startup(() => {
         const song = Tasks.find({}, { sort: { requested_at: 1 } }).fetch()[0];
         History.insert({
             song ,
-            createdAt: new Date(),
+            createdAt: new Date()
         });
         Tasks.remove(song._id);
         JsonRoutes.sendResult(res, {
@@ -50,11 +50,11 @@ Meteor.startup(() => {
         if( _.isUndefined(currentParams)) {
             Params.insert({
                 state: 'pause' ,
-                createdAt: new Date(),
+                createdAt: new Date()
             });
         } else {
             Params.update(currentParams._id, {
-                $set: { state: 'pause' },
+                $set: { state: 'pause' }
             });
         }
         JsonRoutes.sendResult(res, {
@@ -66,11 +66,11 @@ Meteor.startup(() => {
         if( _.isUndefined(currentParams)) {
             Params.insert({
                 state: 'play' ,
-                createdAt: new Date(),
+                createdAt: new Date()
             });
         } else {
             Params.update(currentParams._id, {
-                $set: { state: 'play' },
+                $set: { state: 'play' }
             });
         }
         JsonRoutes.sendResult(res, {
@@ -82,11 +82,11 @@ Meteor.startup(() => {
         if( _.isUndefined(currentParams)) {
             Params.insert({
                 volume: 'volumeup' ,
-                createdAt: new Date(),
+                createdAt: new Date()
             });
         } else {
             Params.update(currentParams._id, {
-                $set: { volume: 'volumeup' },
+                $set: { volume: 'volumeup' }
             });
         }
         JsonRoutes.sendResult(res, {
@@ -98,11 +98,11 @@ Meteor.startup(() => {
         if( _.isUndefined(currentParams)) {
             Params.insert({
                 volume: 'volumedown' ,
-                createdAt: new Date(),
+                createdAt: new Date()
             });
         } else {
             Params.update(currentParams._id, {
-                $set: { volume: 'volumedown' },
+                $set: { volume: 'volumedown' }
             });
         }
         JsonRoutes.sendResult(res, {
