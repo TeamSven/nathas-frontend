@@ -1,11 +1,16 @@
 import { Meteor } from 'meteor/meteor';
 import { Tasks } from '../api/tasks.js';
 import { Params } from '../api/params.js';
+import { History } from '../api/history.js';
 import _ from 'lodash';
 Meteor.startup(() => {
   // code to run on server at startup
     JsonRoutes.add("get", "/next", function (req, res, next) {
         const song = Tasks.find({}, { sort: { requested_at: 1 } }).fetch()[0];
+        History.insert({
+            song ,
+            createdAt: new Date(),
+        });
         Tasks.remove(song._id);
         JsonRoutes.sendResult(res, {
             data: 'next'
