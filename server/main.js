@@ -21,19 +21,34 @@ function shuffle(array) {
 
     return array;
 }
+function insertOrUpdate(key, value, res) {
+    const currentParams = Params.find({}).fetch()[0];
+    if( _.isUndefined(currentParams)) {
+        Params.insert({
+            [key]: value ,
+            createdAt: new Date()
+        });
+    } else {
+        Params.update(currentParams._id, {
+            $set: { [key]: value }
+        });
+    }
+    JsonRoutes.sendResult(res, {
+        data: 'ok'
+    });
+}
 Meteor.startup(() => {
   // code to run on server at startup
     JsonRoutes.add("get", "/shuffle", function (req, res, next) {
         const songs = Tasks.find({}).fetch();
-        console.log('songs', songs);
         const shuffledSongs = shuffle(songs);
-        console.log('shuffled', shuffledSongs);
         Tasks.remove({});
         _.each(shuffledSongs, shuffledSong => Tasks.insert(shuffledSong));
         JsonRoutes.sendResult(res, {
             data: 'shuffled'
         });
     });
+
     JsonRoutes.add("get", "/next", function (req, res, next) {
         const song = Tasks.find({}, { sort: { requested_at: 1 } }).fetch()[0];
         History.insert({
@@ -45,68 +60,20 @@ Meteor.startup(() => {
             data: 'next'
         });
     });
+
     JsonRoutes.add("get", "/pause", function (req, res, next) {
-        const currentParams = Params.find({}).fetch()[0];
-        if( _.isUndefined(currentParams)) {
-            Params.insert({
-                state: 'pause' ,
-                createdAt: new Date()
-            });
-        } else {
-            Params.update(currentParams._id, {
-                $set: { state: 'pause' }
-            });
-        }
-        JsonRoutes.sendResult(res, {
-            data: 'ok'
-        });
+        insertOrUpdate('state', 'pause', res);
     });
+
     JsonRoutes.add("get", "/resume", function (req, res, next) {
-        const currentParams = Params.find({}).fetch()[0];
-        if( _.isUndefined(currentParams)) {
-            Params.insert({
-                state: 'play' ,
-                createdAt: new Date()
-            });
-        } else {
-            Params.update(currentParams._id, {
-                $set: { state: 'play' }
-            });
-        }
-        JsonRoutes.sendResult(res, {
-            data: 'ok'
-        });
+        insertOrUpdate('state', 'play', res);
     });
+
     JsonRoutes.add("get", "/volumeup", function (req, res, next) {
-        const currentParams = Params.find({}).fetch()[0];
-        if( _.isUndefined(currentParams)) {
-            Params.insert({
-                volume: 'volumeup' ,
-                createdAt: new Date()
-            });
-        } else {
-            Params.update(currentParams._id, {
-                $set: { volume: 'volumeup' }
-            });
-        }
-        JsonRoutes.sendResult(res, {
-            data: 'ok'
-        });
+        insertOrUpdate('volume', 'volumeup', res);
     });
+
     JsonRoutes.add("get", "/volumedown", function (req, res, next) {
-        const currentParams = Params.find({}).fetch()[0];
-        if( _.isUndefined(currentParams)) {
-            Params.insert({
-                volume: 'volumedown' ,
-                createdAt: new Date()
-            });
-        } else {
-            Params.update(currentParams._id, {
-                $set: { volume: 'volumedown' }
-            });
-        }
-        JsonRoutes.sendResult(res, {
-            data: 'ok'
-        });
+        insertOrUpdate('volume', 'volumedown', res);
     });
 });
