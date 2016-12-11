@@ -6,7 +6,7 @@ import { Tasks } from '../api/tasks';
 import { Params } from '../api/params';
 import _ from 'lodash';
 import './main.css';
-//10.130.202.108
+
 class App extends Component {
 
     constructor() {
@@ -35,20 +35,20 @@ class App extends Component {
             }
         }
         if(!_.isUndefined(nextProps.params)) {
-            if (!_.isUndefined(nextProps.params.state)) {
-                this.setState({state: nextProps.params.state});
-            }
-            if (!_.isUndefined(nextProps.params.volume)) {
-                this.setState({volume: nextProps.params.volume});
-            }
+            this.handleNewParams(['state','volume'], nextProps);
         }
     }
+    handleNewParams(paramProps, nextProps) {
+        _.each(paramProps, paramProp => {
+            if (!_.isUndefined(nextProps.params[paramProp])) {
+                this.setState({[paramProp]: nextProps.params[paramProp]});
+            }
+        });
+    }
     handleEnd() {
-        console.log('song has ended', this.props);
         Tasks.remove(this.props.song._id);
     }
     handleOnReady(event) {
-        console.log('event', this.state);
         if(!_.isUndefined(event)) {
             this.setState({
                 player: event.target,
@@ -56,7 +56,6 @@ class App extends Component {
         }
     }
     handleStateChange() {
-        console.log('called', this.state.state);
         if(!_.isUndefined(this.state.player)) {
             if(this.state.state === 'pause') {
                 this.state.player.pauseVideo();
@@ -65,16 +64,16 @@ class App extends Component {
                 this.state.player.playVideo();
             }
             if(this.state.volume === 'volumeup') {
-                console.log('increasing volume');
-                this.state.player.setVolume(this.state.player.getVolume() + 20);
-                this.resetVolume();
+                this.updateVolume(this.state.player.getVolume() + 20);
             }
             if(this.state.volume === 'volumedown') {
-                console.log('decreasing volume');
-                this.state.player.setVolume(this.state.player.getVolume() - 20);
-                this.resetVolume();
+                this.updateVolume(this.state.player.getVolume() - 20);
             }
         }
+    }
+    updateVolume(newValue) {
+        this.state.player.setVolume(newValue);
+        this.resetVolume();
     }
     resetVolume() {
         const currentParams = Params.find({}).fetch()[0];
@@ -83,7 +82,6 @@ class App extends Component {
         });
     }
     render() {
-        console.log('render');
         this.handleStateChange();
         const opts = {
             height: '390',
