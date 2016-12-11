@@ -78,12 +78,7 @@ class App extends Component {
     }
     handleStateChange() {
         if(!_.isUndefined(this.state.player)) {
-            if(this.state.state === 'pause') {
-                this.state.player.pauseVideo();
-            }
-            if(this.state.state === 'play') {
-                this.state.player.playVideo();
-            }
+            this.updateState(this.state.state);
             const currentVolume = this.state.player.getVolume();
             if(this.state.volume === 'volumeup') {
                 this.updateVolume(currentVolume + 20);
@@ -96,6 +91,21 @@ class App extends Component {
     updateVolume(newValue) {
         this.state.player.setVolume(newValue);
         this.resetVolume();
+    }
+    updateState(value) {
+        if(value === 'pause') {
+            this.state.player.pauseVideo();
+        }
+        if(value === 'play') {
+            this.state.player.playVideo();
+        }
+        this.resetState();
+    }
+    resetState() {
+        const currentParams = Params.find({}).fetch()[0];
+        Params.update(currentParams._id, {
+            $set: { state: '' },
+        });
     }
     resetVolume() {
         const currentParams = Params.find({}).fetch()[0];
