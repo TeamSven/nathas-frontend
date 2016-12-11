@@ -4,6 +4,7 @@ import 'whatwg-fetch';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/tasks';
 import { Params } from '../api/params';
+import { History } from '../api/history';
 import _ from 'lodash';
 import './main.css';
 
@@ -23,10 +24,11 @@ class App extends Component {
                 const this2 = this;
                 fetch(url)
                     .then(function(response) {
-                        return response.json()
+                        return response.json();
                     }).then(function(json) {
                     console.log(json);
                     this2.setState({id: json.items[0].id.videoId});
+                    this2.updateTitleAndRelatedVideoId(nextProps.song._id, json);
                 }).catch(function(ex) {
                     console.log('parsing failed', ex)
                 });
@@ -38,6 +40,22 @@ class App extends Component {
             this.handleNewParams(['state','volume'], nextProps);
         }
     }
+    updateTitleAndRelatedVideoId(id, data) {
+        const videoId = data.items[0].id.videoId;
+        const title = data.items[0].snippet.title;
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&key=AIzaSyCH1CsGdCFdEV2NFvpiDoYyblqO56mmg8Y&relatedToVideoId=${videoId}`;
+        fetch(url)
+            .then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                console.log(json);
+                Tasks.update(id, {
+                    $set: { videoId, title, 'relatedVideoId': json.items[0].id.videoId }
+                });
+        }).catch(function(ex) {
+            console.log('parsing failed', ex)
+        });
+    }
     handleNewParams(paramProps, nextProps) {
         _.each(paramProps, paramProp => {
             if (!_.isUndefined(nextProps.params[paramProp])) {
@@ -47,6 +65,10 @@ class App extends Component {
     }
     handleEnd() {
         Tasks.remove(this.props.song._id);
+        History.insert({
+            song ,
+            createdAt: new Date()
+        });
     }
     handleOnReady(event) {
         if(!_.isUndefined(event)) {
