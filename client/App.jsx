@@ -65,7 +65,7 @@ class App extends Component {
     handleEnd() {
         Tasks.remove(this.props.song._id);
         History.insert({
-            song ,
+            song: this.props.song ,
             createdAt: new Date()
         });
     }
