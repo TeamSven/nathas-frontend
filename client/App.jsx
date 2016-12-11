@@ -63,11 +63,12 @@ class App extends Component {
             if(this.state.state === 'play') {
                 this.state.player.playVideo();
             }
+            const currentVolume = this.state.player.getVolume();
             if(this.state.volume === 'volumeup') {
-                this.updateVolume(this.state.player.getVolume() + 20);
+                this.updateVolume(currentVolume + 20);
             }
             if(this.state.volume === 'volumedown') {
-                this.updateVolume(this.state.player.getVolume() - 20);
+                this.updateVolume(currentVolume - 20);
             }
         }
     }
