@@ -20,7 +20,7 @@ class App extends Component {
             const {request_url, request_string} = nextProps.song;
             console.log(request_url, request_string);
             if(_.isUndefined(request_url)) {
-                const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${request_string}&type=video&maxResults=1&key=AIzaSyCH1CsGdCFdEV2NFvpiDoYyblqO56mmg8Y`;
+                const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${request_string}&type=video&maxResults=1&key=`;
                 const this2 = this;
                 fetch(url)
                     .then(function(response) {
@@ -43,7 +43,7 @@ class App extends Component {
     updateTitleAndRelatedVideoId(id, data) {
         const videoId = data.items[0].id.videoId;
         const title = data.items[0].snippet.title;
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&key=AIzaSyCH1CsGdCFdEV2NFvpiDoYyblqO56mmg8Y&relatedToVideoId=${videoId}`;
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&key=&relatedToVideoId=${videoId}`;
         fetch(url)
             .then(function(response) {
                 return response.json();
@@ -95,11 +95,12 @@ class App extends Component {
     updateState(value) {
         if(value === 'pause') {
             this.state.player.pauseVideo();
+            this.resetState();
         }
         if(value === 'play') {
             this.state.player.playVideo();
+            this.resetState();
         }
-        this.resetState();
     }
     resetState() {
         const currentParams = Params.find({}).fetch()[0];
